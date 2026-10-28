@@ -15,14 +15,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	// PlayerがItemにぶつかった時のみClearとする
 	UFUNCTION()
-	/// @brief ぶつかったActorを判定してPlayerなら次のレベルに遷移する
-	/// @param OverlappedComp 自分側のコリジョン
-	/// @param OtherActor 触れてきたアクタ
-	/// @param OtherComp 触れてきた側のコンポーネント
-	/// @param OtherBodyIndex ボディ番号
-	/// @param bFromSweep sweep移動での接触か
-	/// @param SweepResult 当たり判定の詳細情報
-	/// @detail Levelの後ろの数値を足す(01 => 02) Level名の後ろ2文字にID必須
+	/* @brief ぶつかったActorを判定してPlayerなら次のレベルに遷移する
+	 * @param OverlappedComp 自分側のコリジョン
+	 * @param OtherActor 触れてきたアクタ
+	 * @param OtherComp 触れてきた側のコンポーネント
+	 * @param OtherBodyIndex ボディ番号
+	 * @param bFromSweep sweep移動での接触か
+	 * @param SweepResult 当たり判定の詳細情報
+	 * @detail Levelの後ろの数値を足す(01 => 02) Level名の後ろ2文字にID必須
+	*/
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,int32 OtherBodyIndex,bool bFromSweep,const FHitResult& SweepResult);
 	
@@ -35,6 +36,4 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
-private:
 };
