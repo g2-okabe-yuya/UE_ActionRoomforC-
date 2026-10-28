@@ -26,9 +26,10 @@ public:
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,int32 OtherBodyIndex,bool bFromSweep,const FHitResult& SweepResult);
 	
-	// param
+	// どのくらい回転するか
 	UPROPERTY(EditAnywhere,Category="ItemSettings")
 	float RotationZ = 0.5f;
+	// 衝突判定で使用するコライダー
 	UPROPERTY(EditAnywhere,BlueprintReadOnly, Category="ItemSettings")
 	TObjectPtr<UBoxComponent> BoxCollision;
 
