@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -75,6 +76,10 @@ void AMyThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 			EnhancedInputComponent->BindAction(IA_Jump,ETriggerEvent::Started,this, &AMyThirdPersonCharacter::OnJumpInput);
 			EnhancedInputComponent->BindAction(IA_Jump,ETriggerEvent::Completed,this, &AMyThirdPersonCharacter::OnJumpCompleted);
 		}
+		if (IA_Pause)
+		{
+			EnhancedInputComponent->BindAction(IA_Pause,ETriggerEvent::Triggered,this, &AMyThirdPersonCharacter::OnPauseInput);
+		}
 	}
 
 }
@@ -134,6 +139,29 @@ void AMyThirdPersonCharacter::OnComponentHit(UPrimitiveComponent* OverlappedComp
 	if (Cast<AKillerBase>(OtherActor))
 	{
 		GameOver();
+	}
+}
+
+void AMyThirdPersonCharacter::OnPauseInput(const FInputActionValue& Value)
+{
+	if (IsGamePaused)
+	{
+		IsGamePaused = false;
+	}
+	else
+	{
+		IsGamePaused = true;
+	}
+	
+	UGameplayStatics::SetGamePaused(GetWorld(),IsGamePaused);
+	if (IsGamePaused)
+	{
+		CurrentPauseWidget = UWidgetBlueprintLibrary::Create(GetWorld(),PauseWidget,Cast<APlayerController>(GetController()));
+		CurrentPauseWidget->AddToViewport(0);
+	}
+	else
+	{
+		CurrentPauseWidget->RemoveFromParent();
 	}
 }
 
