@@ -17,16 +17,23 @@ AMyThirdPersonCharacter::AMyThirdPersonCharacter()
 void AMyThirdPersonCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	MeshComponent = GetMesh();
-	SphereCollision = FindComponentByClass<UCapsuleComponent>();
 	
-	if (!SphereCollision)
+	InitTransform = GetActorTransform();
+	InitMeshTransform = MeshComponent->GetRelativeTransform();
+	if (MeshComponent == nullptr)
+	{
+		MeshComponent = GetMesh();
+	}
+	
+	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	
+	if (!CapsuleComp)
 	{
 		UE_LOG(LogTemp, Error, TEXT("No sphere collision found"));
 		return;
 	}
 	
-	SphereCollision->OnComponentHit.AddDynamic(this, &AMyThirdPersonCharacter::OnComponentHit);
+	CapsuleComp->OnComponentHit.AddDynamic(this, &AMyThirdPersonCharacter::OnComponentHit);
 }
 
 void AMyThirdPersonCharacter::Tick(float DeltaTime)
@@ -80,15 +87,10 @@ void AMyThirdPersonCharacter::CreateWBPStageNameWidget(APlayerController* Player
 		return;
 	}
 	
-	InitTransform = GetActorTransform();
-	
 	if (MeshComponent == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("No mesh widget"));
-		return;
+		MeshComponent = GetMesh();
 	}
-	
-	InitMeshTransform = MeshComponent->GetRelativeTransform();
 	
 	UUserWidget* CreateStageNameWidget = UWidgetBlueprintLibrary::Create(GetWorld(),StageNameWidget,PlayerController);
 	CreateStageNameWidget->AddToViewport(0);
@@ -145,10 +147,18 @@ void AMyThirdPersonCharacter::GameOver()
 
 void AMyThirdPersonCharacter::Respawn()
 {
-	SetActorTransform(InitTransform);
 	MeshComponent->SetSimulatePhysics(false);
 	MeshComponent->SetCollisionProfileName("CharacterMesh",true);
-	K2_AttachToComponent(SphereCollision,"None",EAttachmentRule::KeepRelative,EAttachmentRule::KeepRelative,EAttachmentRule::KeepRelative,true);
+	MeshComponent->AttachToComponent(GetCapsuleComponent(),FAttachmentTransformRules::KeepRelativeTransform,NAME_None);
+	SetActorTransform(InitTransform);
 	MeshComponent->SetRelativeTransform(InitMeshTransform);
-	EnableInput(Cast<APlayerController>(GetController()));
+	
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		EnableInput(PlayerController);
+	}
+	else
+	{
+		UE_LOG(LogTemp,Error,TEXT("Can't find player controller"));
+	}
 }

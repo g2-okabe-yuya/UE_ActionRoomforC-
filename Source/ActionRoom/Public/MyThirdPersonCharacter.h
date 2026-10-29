@@ -38,8 +38,6 @@ private:
 	TSubclassOf<UUserWidget> PauseWidget;
 	UPROPERTY(EditAnywhere, Category = "Game Settings")
 	float GameOverDelay;
-	UPROPERTY(EditAnywhere)
-	UCapsuleComponent* SphereCollision;
 	UPROPERTY()
 	TObjectPtr<UUserWidget> CurrentPauseWidget;
 	
