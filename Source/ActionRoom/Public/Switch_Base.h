@@ -28,8 +28,8 @@ private:
 	UFUNCTION()
 	void HandleTimelineUpdate(float Height);
 	UFUNCTION()
-	void HandleTimelineFinished(ETimelineDirection::Type Direction);
-	
+	void HandleTimelineFinished();
+	UFUNCTION()
 	void OnReleasedButton();
 	bool IsPressed;
 	UPROPERTY(EditAnywhere,Category="Switch Base")

@@ -59,7 +59,7 @@ void ASwitch_Base::OnComponentHit(UPrimitiveComponent* OverlappedComp, AActor* O
 	{
 		if (IsPressed == false)
 		{
-			IsPressed = false;
+			IsPressed = true;
 			// タイムラインの再生
 			ButtonUpDawn.PlayFromStart(); 
 		}
@@ -73,9 +73,9 @@ void ASwitch_Base::HandleTimelineUpdate(float Height)
 	Button->SetRelativeLocation(MakeVector);
 }
 
-void ASwitch_Base::HandleTimelineFinished(ETimelineDirection::Type Direction)
+void ASwitch_Base::HandleTimelineFinished()
 {
-	if (Direction == ETimelineDirection::Forward)
+	if (ButtonUpDawn.GetPlaybackPosition() >= ButtonUpDawn.GetTimelineLength())
 	{
 		OnPressedButton();
 	}

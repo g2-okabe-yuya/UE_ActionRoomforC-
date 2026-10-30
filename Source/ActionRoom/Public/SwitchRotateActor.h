@@ -10,9 +10,12 @@ class ACTIONROOM_API ASwitchRotateActor : public ASwitch_Base
 	GENERATED_BODY()
 	
 public:
+	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "RotateFloor")
 	TObjectPtr<AActor> RotateActor;
+	UFUNCTION()
 	void HandleRotationTimelineUpdate(float Angle);
+	UFUNCTION()
 	void HandleRotationTimelineFinished();
 	
 protected:

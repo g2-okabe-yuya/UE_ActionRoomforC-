@@ -16,7 +16,13 @@ void ASwitchRotateActor::BindTimeline()
 	RotateTimeline.AddInterpFloat(RotateCurve,UpdateProgress);
 	FOnTimelineEvent FinishedEvent;
 	FinishedEvent.BindUFunction(this, "HandleRotationTimelineFinished");
-	ButtonUpDawn.SetTimelineFinishedFunc(FinishedEvent);
+	RotateTimeline.SetTimelineFinishedFunc(FinishedEvent);
+}
+
+void ASwitchRotateActor::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	RotateTimeline.TickTimeline(DeltaTime);
 }
 
 void ASwitchRotateActor::OnPressedButton()
@@ -45,6 +51,5 @@ void ASwitchRotateActor::HandleRotationTimelineUpdate(float Angle)
 
 void ASwitchRotateActor::HandleRotationTimelineFinished()
 {
-	ButtonUpDawn.ReverseFromEnd();
+	RotateTimeline.ReverseFromEnd();
 }
-
