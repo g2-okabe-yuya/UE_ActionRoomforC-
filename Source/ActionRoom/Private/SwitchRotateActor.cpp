@@ -1,7 +1,5 @@
 #include "SwitchRotateActor.h"
 
-#include "Kismet/KismetMathLibrary.h"
-
 void ASwitchRotateActor::BeginPlay()
 {
 	Super::BeginPlay();
@@ -10,13 +8,10 @@ void ASwitchRotateActor::BeginPlay()
 
 void ASwitchRotateActor::BindTimeline()
 {
-	// Timelineの更新処理と終了時の処理をBind
+	// Timelineの更新処理をBind
 	FOnTimelineFloat UpdateProgress;
 	UpdateProgress.BindUFunction(this, "HandleRotationTimelineUpdate");
-	RotateTimeline.AddInterpFloat(RotateCurve,UpdateProgress);
-	FOnTimelineEvent FinishedEvent;
-	FinishedEvent.BindUFunction(this, "HandleRotationTimelineFinished");
-	RotateTimeline.SetTimelineFinishedFunc(FinishedEvent);
+	RotateTimeline.AddInterpFloat(RotateCurve, UpdateProgress);
 }
 
 void ASwitchRotateActor::Tick(float DeltaTime)
@@ -28,28 +23,18 @@ void ASwitchRotateActor::Tick(float DeltaTime)
 void ASwitchRotateActor::OnPressedButton()
 {
 	Super::OnPressedButton();
-	
-	FRotator Rotation = RotateActor->GetActorRotation();
-	
-	float Roll = 0.0f;
-	float Pitch = 0.0f;
-	float Yaw = 0.0f;
-	StartAngle = Yaw;
-	UKismetMathLibrary::BreakRotator(Rotation,Roll,Pitch,Yaw);
-	Yaw += 90.0f;
-	FinishAngle = Yaw;
-	
+
+	StartRotation = RotateActor->GetActorRotation();
+	StartAngle = StartRotation.Yaw;
+	FinishAngle = StartAngle + 90.0f;
+
 	RotateTimeline.PlayFromStart();
 }
 
 void ASwitchRotateActor::HandleRotationTimelineUpdate(float Angle)
 {
-	float RotationAngle = FMath::Lerp(StartAngle,FinishAngle,Angle);
-	FRotator NewRotation = UKismetMathLibrary::MakeRotator(0.0f,0.0f,RotationAngle);
+	float RotationAngle = FMath::Lerp(StartAngle, FinishAngle, Angle);
+	FRotator NewRotation = StartRotation;
+	NewRotation.Yaw = RotationAngle;
 	RotateActor->SetActorRotation(NewRotation);
-}
-
-void ASwitchRotateActor::HandleRotationTimelineFinished()
-{
-	RotateTimeline.ReverseFromEnd();
 }
